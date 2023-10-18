@@ -1,0 +1,15 @@
+.encryptedKey.json
+.vscode
+
+# hardhat
+artifacts
+cache
+deployments
+node_modules
+coverage
+coverage.json
+typechain
+
+.env
+*.log
+gas-report.txt
