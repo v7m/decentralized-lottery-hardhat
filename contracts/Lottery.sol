@@ -31,6 +31,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint256 private s_startTimestamp;
     address private s_recentWinner;
     address payable[] private s_players;
+    mapping(address => uint256) private s_addressToPlayerAmount;
     LotteryState private s_lotteryState;
 
     event LotteryWinnerRequested(uint256 indexed requestId);
@@ -64,6 +65,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
             revert Lottery__LotteryTemporarilyClosed();
         }
 
+        s_addressToPlayerAmount[msg.sender] += msg.value;
         s_players.push(payable(msg.sender));
         emit PlayerEnterLottery(msg.sender);
     }
@@ -124,7 +126,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         uint256 winnerIndex = randomNubmer % s_players.length;
         address payable winner = s_players[winnerIndex];
         s_recentWinner = winner;
-        s_players = new address payable[](0);
+        resetPlayers();
         openLottery();
         s_startTimestamp = block.timestamp;
         (bool transferSuccess, ) = winner.call{value: address(this).balance}(""); // transfer money to winner
@@ -142,6 +144,23 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function closeLottery() internal {
         s_lotteryState = LotteryState.WINNER_CALCULATING;
+    }
+
+    function resetPlayers() internal {
+        for (uint256 playerIndex = 0; playerIndex < s_players.length; playerIndex++) {
+            address player = s_players[playerIndex];
+            s_addressToPlayerAmount[player] = 0;
+        }
+
+        s_players = new address payable[](0);
+    }
+
+    function getGetPlayerAmount(address playerAddress) public view returns (uint256) {
+        return s_addressToPlayerAmount[playerAddress];
+    }
+
+    function getLotteryPrize() public view returns (uint256) {
+        return address(this).balance;
     }
 
     function getLotteryState() public view returns (LotteryState) {

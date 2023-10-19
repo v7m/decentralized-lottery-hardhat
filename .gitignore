@@ -13,3 +13,5 @@ typechain
 .env
 *.log
 gas-report.txt
+
+.DS_Store

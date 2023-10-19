@@ -45,7 +45,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                 it("records player when they enter", async () => {
                     await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
                     const playerAddress = await lotteryContract.getPlayer(0);
-    
+
                     expect(player.address).to.eq(playerAddress);
                 });
 
@@ -290,6 +290,32 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                         });
                     });
                 });
+            });
+        });
+
+        describe("getLotteryPrize", function () {
+            beforeEach(async () => {
+                await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+            });
+
+            it("returns correct lottery prize", async () => {
+                const lotteryPrize = await lotteryContract.getLotteryPrize();
+
+                expect(lotteryPrize).to.eq(lotteryEntrancePrice);
+            });
+        });
+
+        describe("getGetPlayerAmount", function () {
+            beforeEach(async () => {
+                await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+                await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+            });
+
+            it("returns correct player amount", async () => {
+                const playerAddress = await lotteryContract.getPlayer(0);
+                const playerAmount = await lotteryContract.getGetPlayerAmount(playerAddress);
+
+                expect(Number(playerAmount)).to.eq(lotteryEntrancePrice * 2);
             });
         });
     });
