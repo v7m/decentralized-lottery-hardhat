@@ -107,7 +107,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
      * @dev Function that Chainlink VRF node calls to send the money to the random lottery winner.
      */
     function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override {
-        pickLotteryWinner(randomWords[0]);
+        sendPrizeToWinner(randomWords[0]);
     }
 
     function requestVrfRandomNumber() internal {
@@ -122,9 +122,8 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         emit LotteryWinnerRequested(requestId);
     }
 
-    function pickLotteryWinner(uint256 randomNubmer) internal {
-        uint256 winnerIndex = randomNubmer % s_players.length;
-        address payable winner = s_players[winnerIndex];
+    function sendPrizeToWinner(uint256 randomNubmer) internal {
+        address payable winner = pickLotteryWinner(randomNubmer);
         s_recentWinner = winner;
         resetPlayers();
         openLottery();
@@ -136,6 +135,24 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         }
 
         emit LotteryWinnerPicked(winner);
+    }
+
+    function pickLotteryWinner(uint256 randomNubmer) internal view returns(address payable winner) {
+        uint256 randomAmountValue = randomNubmer % address(this).balance;
+        uint256 amountRangeStart = 0;
+
+        for (uint256 playerIndex = 0; playerIndex < s_players.length; playerIndex++) {
+            address player = s_players[playerIndex];
+            uint256 playerAmount = s_addressToPlayerAmount[player];
+            uint256 amountRangeEnd = amountRangeStart + playerAmount;
+
+            // If the random value falls within the user's range, return their address.
+            if (randomAmountValue >= amountRangeStart && randomAmountValue < amountRangeEnd) {
+                return s_players[playerIndex];
+            }
+
+            amountRangeStart = amountRangeEnd;
+        }
     }
 
     function openLottery() internal {

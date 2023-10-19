@@ -186,22 +186,27 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
             });
 
             context("when called after performUpkeep", () => {
-                let additionalLotteryEntrances, startTimestamp, winnerStartingBalance;
+                let additionalLotteryEntrances, startTimestamp, winnerStartingBalance, winner;
 
                 beforeEach(async () => {
-                    additionalLotteryEntrances = 3;
-                    const startingIndex = 2;
+                    // total: lotteryEntrancePrice * 103
+                    const players = [
+                        { account: accounts[2], amount: lotteryEntrancePrice.mul(100) },
+                        { account: accounts[3], amount: lotteryEntrancePrice },
+                        { account: accounts[4], amount: lotteryEntrancePrice }
+                    ];
 
-                    for (let i = startingIndex; i < startingIndex + additionalLotteryEntrances; i++) {
-                        lotteryContract = lotteryContract.connect(accounts[i]);
-                        await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+                    winner = accounts[2];
+
+                    for (const player of players) {
+                        lotteryContract = lotteryContract.connect(player.account);
+                        await lotteryContract.enterLottery({ value: player.amount });
                     }
                     
                     startTimestamp = await lotteryContract.getStartTimestamp();
-
                     const txResponse = await lotteryContract.performUpkeep("0x");
                     const txReceipt = await txResponse.wait(1);
-                    winnerStartingBalance = await accounts[2].getBalance();
+                    winnerStartingBalance = await winner.getBalance();
                     await vrfCoordinatorV2Mock.fulfillRandomWords(
                         txReceipt.events[1].args.requestId,
                         lotteryContract.address
@@ -214,7 +219,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                             try {
                                 const recentWinner = await lotteryContract.getRecentWinner();
 
-                                assert.equal(recentWinner.toString(), accounts[2].address);
+                                assert.equal(recentWinner.toString(), winner.address);
 
                                 resolve();
                             } catch (e) { 
@@ -259,11 +264,8 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                         lotteryContract.once("LotteryWinnerPicked", async () => { 
                             try {
                                 const winnerBalance = await accounts[2].getBalance();
-                                const expectedWinnerBalance = winnerStartingBalance.add(
-                                    lotteryEntrancePrice
-                                        .mul(additionalLotteryEntrances)
-                                        .add(lotteryEntrancePrice)
-                                )
+                                const winnerPrize = lotteryEntrancePrice.mul(103)
+                                const expectedWinnerBalance = winnerStartingBalance.add(winnerPrize);
 
                                 expect(winnerBalance.toString()).to.eq(expectedWinnerBalance.toString())
                                 
