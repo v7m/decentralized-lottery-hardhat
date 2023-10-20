@@ -14,7 +14,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
             await deployments.fixture(["mocks", "lottery"]);
             vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock");
             lotteryContract = await ethers.getContract("Lottery", player);
-            lotteryEntrancePrice = await lotteryContract.getEntrancePrice();
+            lotteryEntrancePrice = await lotteryContract.getMinEntrancePrice();
             lotteryDuration = await lotteryContract.getDuration();
         });
 
@@ -33,9 +33,19 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
         });
 
         describe("enterLottery", function () {
-            context("when player doesn't send enough amount", () => {
+            context("when player doesn't send any amount", () => {
                 it("reverts with Lottery__TransactionAmountTooLow error", async () => {
                     await expect(lotteryContract.enterLottery()).to.be.revertedWith(
+                        "Lottery__TransactionAmountTooLow"
+                    );
+                });
+            });
+
+            context("when player doesn't send enough amount", () => {
+                it("reverts with Lottery__TransactionAmountTooLow error", async () => {
+                    const entranceAmount = lotteryEntrancePrice.div(2);
+
+                    await expect(lotteryContract.enterLottery({ value: entranceAmount })).to.be.revertedWith(
                         "Lottery__TransactionAmountTooLow"
                     );
                 });
@@ -186,7 +196,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
             });
 
             context("when called after performUpkeep", () => {
-                let additionalLotteryEntrances, startTimestamp, winnerStartingBalance, winner;
+                let startTimestamp, winnerStartingBalance, winner;
 
                 beforeEach(async () => {
                     // total: lotteryEntrancePrice * 103
@@ -234,6 +244,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                         lotteryContract.once("LotteryWinnerPicked", async () => { 
                             try {
                                 await expect(lotteryContract.getPlayer(0)).to.be.reverted;
+                                await expect(lotteryContract.getGetPlayerAmount(winner)).to.be.reverted;
                                 
                                 resolve();
                             } catch (e) { 
@@ -308,16 +319,39 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
         });
 
         describe("getGetPlayerAmount", function () {
+            let expectedPlayerAmount;
+
             beforeEach(async () => {
-                await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
-                await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+                expectedPlayerAmount = lotteryEntrancePrice.mul(2);
+                await lotteryContract.enterLottery({ value: expectedPlayerAmount });
             });
 
             it("returns correct player amount", async () => {
                 const playerAddress = await lotteryContract.getPlayer(0);
                 const playerAmount = await lotteryContract.getGetPlayerAmount(playerAddress);
 
-                expect(Number(playerAmount)).to.eq(lotteryEntrancePrice * 2);
+                expect(playerAmount.toString()).to.eq(expectedPlayerAmount.toString());
+            });
+        });
+
+        describe("getPlayersAmountAvg", function () {
+            beforeEach(async () => {
+                const players = [
+                    { account: accounts[2], amount: ethers.utils.parseEther("1") },
+                    { account: accounts[3], amount: ethers.utils.parseEther("2") },
+                    { account: accounts[4], amount: ethers.utils.parseEther("3") }
+                ];
+
+                for (const player of players) {
+                    lotteryContract = lotteryContract.connect(player.account);
+                    await lotteryContract.enterLottery({ value: player.amount });
+                }
+            });
+
+            it("returns correct players amount AVG", async () => {
+                const playersAmountAvg = await lotteryContract.getPlayersAmountAvg();
+
+                expect(playersAmountAvg.toString()).to.eq(ethers.utils.parseEther("2").toString());
             });
         });
     });

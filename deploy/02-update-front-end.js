@@ -7,7 +7,10 @@ module.exports = async () => {
         console.log("Updating contract address and ABI on frontend...");
         await updateContractAddresses();
         await updateContractAbi();
-        console.log("Frontend updated!");
+
+        log("----------------------------------------------------------");
+        log("Frontend Updated!");
+        log("----------------------------------------------------------");
     }
 }
 

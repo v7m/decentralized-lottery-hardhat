@@ -10,7 +10,7 @@ developmentChains.includes(network.name)
         beforeEach(async function () {
             deployer = (await getNamedAccounts()).deployer;
             lotteryContract = await ethers.getContract("Lottery", deployer);
-            lotteryEntrancePrice = await lotteryContract.getEntrancePrice();
+            lotteryEntrancePrice = await lotteryContract.getMinEntrancePrice();
         });
 
         describe("fulfillRandomWords", function () {

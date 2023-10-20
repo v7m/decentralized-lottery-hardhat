@@ -2,8 +2,8 @@ const { ethers } = require("hardhat");
 
 async function enterLottery() {
     const lottery = await ethers.getContract("Lottery");
-    const entrancePrice = await lottery.getEntrancePrice();
-    await lottery.enterLottery({ value: entrancePrice + 1 });
+    const minEntrancePrice = await lottery.getMinEntrancePrice();
+    await lottery.enterLottery({ value: minEntrancePrice + 1 });
     console.log("Lottery entered!");
 }
 

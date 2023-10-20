@@ -27,7 +27,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint32 private immutable i_vrfCallbackGasLimit;
 
     uint256 private immutable i_duration;
-    uint256 private immutable i_entrancePrice;
+    uint256 private immutable i_minEntrancePrice;
     uint256 private s_startTimestamp;
     address private s_recentWinner;
     address payable[] private s_players;
@@ -44,20 +44,20 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         bytes32 vrfGasLane,
         uint32 vrfCallbackGasLimit,
         uint256 duration,
-        uint256 entrancePrice
+        uint256 minEntrancePrice
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_vrfSubscriptionId = vrfSubscriptionId;
         i_vrfGasLane = vrfGasLane;
         i_vrfCallbackGasLimit = vrfCallbackGasLimit;
         i_duration = duration;
-        i_entrancePrice = entrancePrice;
+        i_minEntrancePrice = minEntrancePrice;
         s_lotteryState = LotteryState.OPEN;
         s_startTimestamp = block.timestamp;
     }
 
     function enterLottery() public payable {
-        if (msg.value < i_entrancePrice) {
+        if (msg.value < i_minEntrancePrice) {
             revert Lottery__TransactionAmountTooLow();
         }
 
@@ -146,7 +146,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
             uint256 playerAmount = s_addressToPlayerAmount[player];
             uint256 amountRangeEnd = amountRangeStart + playerAmount;
 
-            // If the random value falls within the user's range, return their address.
+            // If the random value falls within the player's amount range, return their address.
             if (randomAmountValue >= amountRangeStart && randomAmountValue < amountRangeEnd) {
                 return s_players[playerIndex];
             }
@@ -170,6 +170,10 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         }
 
         s_players = new address payable[](0);
+    }
+
+    function getPlayersAmountAvg() public view returns(uint256) {
+        return getLotteryPrize() / s_players.length;
     }
 
     function getGetPlayerAmount(address playerAddress) public view returns (uint256) {
@@ -208,8 +212,8 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         return i_duration;
     }
 
-    function getEntrancePrice() public view returns (uint256) {
-        return i_entrancePrice;
+    function getMinEntrancePrice() public view returns (uint256) {
+        return i_minEntrancePrice;
     }
 
     function getPlayersCount() public view returns (uint256) {
