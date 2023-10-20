@@ -173,6 +173,10 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     }
 
     function getPlayersAmountAvg() public view returns(uint256) {
+        if (s_players.length == 0) {
+            return 0;
+        }
+
         return getLotteryPrize() / s_players.length;
     }
 
