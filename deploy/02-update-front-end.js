@@ -8,9 +8,9 @@ module.exports = async () => {
         await updateContractAddresses();
         await updateContractAbi();
 
-        log("----------------------------------------------------------");
-        log("Frontend Updated!");
-        log("----------------------------------------------------------");
+        console.log("----------------------------------------------------------");
+        console.log("Frontend Updated!");
+        console.log("----------------------------------------------------------");
     }
 }
 
