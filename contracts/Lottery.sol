@@ -39,6 +39,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     event LotteryWinnerPicked(address indexed player);
     event LotteryOpened();
     event LotteryClosed();
+    event LotteryStarted();
 
     constructor(
         address vrfCoordinatorV2,
@@ -70,6 +71,10 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         s_addressToPlayerAmount[msg.sender] += msg.value;
         s_players.push(payable(msg.sender));
         emit PlayerEnterLottery(msg.sender);
+
+        if (s_players.length == 1) {
+            emit LotteryStarted();
+        }
     }
 
     /**
