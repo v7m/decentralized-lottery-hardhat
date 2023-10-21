@@ -37,6 +37,8 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     event LotteryWinnerRequested(uint256 indexed requestId);
     event PlayerEnterLottery(address indexed player);
     event LotteryWinnerPicked(address indexed player);
+    event LotteryOpened();
+    event LotteryClosed();
 
     constructor(
         address vrfCoordinatorV2,
@@ -85,7 +87,7 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         bool lotteryHasBalance = address(this).balance > 0;
         upkeepNeeded = (lotteryIsOpen && lotteryIsOver && lotteryHasPlayers && lotteryHasBalance);
 
-        return (upkeepNeeded, "0x0"); // can we comment this out?
+        return (upkeepNeeded, "0x0");
     }
 
     /**
@@ -157,10 +159,12 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function openLottery() internal {
         s_lotteryState = LotteryState.OPEN;
+        emit LotteryOpened();
     }
 
     function closeLottery() internal {
         s_lotteryState = LotteryState.WINNER_CALCULATING;
+        emit LotteryClosed();
     }
 
     function resetPlayers() internal {

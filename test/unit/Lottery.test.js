@@ -163,7 +163,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                 it("updates the lottery state and emits a requestId", async () => {
                     const txReceipt = await txResponse.wait(1);
                     const lotteryState = await lotteryContract.getLotteryState();
-                    const requestId = txReceipt.events[1].args.requestId;
+                    const requestId = txReceipt.events[2].args.requestId;
 
                     expect(requestId.toNumber()).to.be.greaterThan(0);
                     expect(lotteryState).to.eq(1);
@@ -218,7 +218,7 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                     const txReceipt = await txResponse.wait(1);
                     winnerStartingBalance = await winner.getBalance();
                     await vrfCoordinatorV2Mock.fulfillRandomWords(
-                        txReceipt.events[1].args.requestId,
+                        txReceipt.events[2].args.requestId,
                         lotteryContract.address
                     );
                 });
