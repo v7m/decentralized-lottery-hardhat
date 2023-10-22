@@ -80,6 +80,22 @@ const { time } = require("@nomicfoundation/hardhat-network-helpers");
                     });
                 });
             });
+
+            context("when player enters multiple times", () => {
+                beforeEach(async () => {
+                    await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+                    await lotteryContract.enterLottery({ value: lotteryEntrancePrice });
+                });
+
+                it("counts as one player", async () => {
+                    const playerAddress = await lotteryContract.getPlayer(0);
+                    const playerAmount = await lotteryContract.getGetPlayerAmount(playerAddress);
+                    const playersCount = await lotteryContract.getPlayersCount();
+
+                    expect(playerAmount).to.eq(lotteryEntrancePrice.mul(2));
+                    expect(playersCount).to.eq(1);
+                });
+            });
         });
 
         describe("checkUpkeep", function () {

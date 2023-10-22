@@ -31,8 +31,8 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint256 private s_startTimestamp;
     address private s_recentWinner;
     address payable[] private s_players;
-    mapping(address => uint256) private s_addressToPlayerAmount;
     LotteryState private s_lotteryState;
+    mapping(address => uint256) private s_addressToPlayerAmount;
 
     event LotteryWinnerRequested(uint256 indexed requestId);
     event PlayerEnterLottery(address indexed player);
@@ -68,8 +68,11 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
             revert Lottery__LotteryTemporarilyClosed();
         }
 
+        if (!isPlayerPresent(msg.sender)) {
+            s_players.push(payable(msg.sender));
+        }
+
         s_addressToPlayerAmount[msg.sender] += msg.value;
-        s_players.push(payable(msg.sender));
         emit PlayerEnterLottery(msg.sender);
 
         if (s_players.length == 1) {
@@ -170,6 +173,10 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     function closeLottery() internal {
         s_lotteryState = LotteryState.WINNER_CALCULATING;
         emit LotteryClosed();
+    }
+
+    function isPlayerPresent(address _targetAddress) internal view returns (bool) {
+        return s_addressToPlayerAmount[_targetAddress] > 0;
     }
 
     function resetPlayers() internal {
