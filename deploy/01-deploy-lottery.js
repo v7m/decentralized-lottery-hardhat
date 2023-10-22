@@ -68,7 +68,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log("Enter lottery with command:");
     const networkName = network.name == "hardhat" ? "localhost" : network.name;
     log(`yarn hardhat run scripts/enterLottery.js --network ${networkName}`);
-    log("----------------------------------------------------");
+    log("----------------------------------------------------------");
 }
 
 module.exports.tags = ["all", "lottery"];

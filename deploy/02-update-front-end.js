@@ -9,7 +9,7 @@ module.exports = async () => {
         await updateContractAbi();
 
         console.log("----------------------------------------------------------");
-        console.log("Frontend Updated!");
+        console.log("Contract address and ABI updated on frontend!");
         console.log("----------------------------------------------------------");
     }
 }
@@ -22,13 +22,14 @@ async function updateContractAbi() {
 async function updateContractAddresses() {
     const lottery = await ethers.getContract("Lottery");
     const contractAddresses = JSON.parse(fs.readFileSync(FRONTEND_CONTRACT_ADDERS_FILE, "utf8"));
+    const chainId = network.config.chainId.toString();
 
-    if (network.config.chainId.toString() in contractAddresses) {
-        if (!contractAddresses[network.config.chainId.toString()].includes(lottery.address)) {
-            contractAddresses[network.config.chainId.toString()] = lottery.address;
+    if (chainId in contractAddresses) {
+        if (!contractAddresses[chainId].includes(lottery.address)) {
+            contractAddresses[chainId].push(lottery.address);
         }
     } else {
-        contractAddresses[network.config.chainId.toString()] = [lottery.address];
+        contractAddresses[chainId] = [lottery.address];
     }
 
     fs.writeFileSync(FRONTEND_CONTRACT_ADDERS_FILE, JSON.stringify(contractAddresses));
