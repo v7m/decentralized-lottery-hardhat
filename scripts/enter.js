@@ -4,7 +4,10 @@ async function enterLottery() {
     const lottery = await ethers.getContract("Lottery");
     const minEntrancePrice = await lottery.getMinEntrancePrice();
     await lottery.enterLottery({ value: minEntrancePrice + 1 });
-    console.log("Lottery entered!");
+
+    console.log("----------------------------------------------------------");
+    console.log("Lottery successfully entered!");
+    console.log("----------------------------------------------------------");
 }
 
 enterLottery()
