@@ -50,7 +50,7 @@ module.exports = {
         currency: "USD",
         outputFile: "gas-report.txt",
         noColors: true,
-        coinmarketcap: COINMARKETCAP_API_KEY,
+        // coinmarketcap: COINMARKETCAP_API_KEY // uncomment to enable USD GAS estimation
     },
     contractSizer: {
         runOnCompile: false,
