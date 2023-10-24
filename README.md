@@ -11,7 +11,6 @@ Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3
 - Ethers.js
 - Next.js
 - Moralis
-- Web3UIKit
 - IPFS
 
 # Getting Started
