@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-solhint");
 require("hardhat-deploy");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
