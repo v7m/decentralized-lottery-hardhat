@@ -4,9 +4,8 @@
 
 This app is a part of the Decentralized Ethereum Lottery project, designed for creating, testing, and deploying smart contracts. You can find the frontend part in the [Next.js Repo](https://github.com/v7m/decentralized-lottery-nextjs).
 
-Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
 
-## Built with:
+# Built with:
 - Solidity
 - Chainlink
 - Hardhat
@@ -14,6 +13,9 @@ Ethereum Smart Contract Address (Sepolia chain): [0xe59A431759a5a3C270Bba717C1E3
 - Next.js
 - Moralis
 - IPFS
+
+# Smart contracts (Sepolia)
+[0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
 
 # Getting Started
 
@@ -91,7 +93,7 @@ Your contract is now configured as a tamper-proof, autonomously verifiable rando
 yarn hardhat run scripts/enter.js --network sepolia
 ```
 
-### Estimate GAS cost in USD
+## Estimate GAS cost in USD
 
 Next, remove the comment from the line `coinmarketcap: COINMARKETCAP_API_KEY` in your `hardhat.config.js` to enable USD estimation. However, please be aware that every time you run your tests, it will consume an API call. Thus, so it might make sense to keep CoinMarketCap disabled until it's required, which can be done by commenting the line again.
 
