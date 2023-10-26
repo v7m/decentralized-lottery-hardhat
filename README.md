@@ -111,11 +111,7 @@ yarn hardhat verify --constructor-args arguments.js <DEPLOYED_CONTRACT_ADDRESS>
 
 # Linting
 
-To check linting / code formatting:
+To check linting:
 ```
-yarn lint
-```
-or, to fix:
-```
-yarn lint:fix
+yarn hardhat check
 ```

@@ -37,7 +37,7 @@ jobs:
       - <<: *step-restore-build-cache
       - run:
           name: Lint
-          command: yarn lint
+          command: yarn hardhat check
   test:
     <<: *default-environment
     steps:
