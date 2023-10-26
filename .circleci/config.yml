@@ -1,65 +1,62 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
-
 default-environment: &default-environment
   docker:
     - image: cimg/node:18.17.0
 
-step-restore-build-cache: &step-restore-build-cache
-  restore_cache:
-    name: Restore Yarn Package Cache
-    keys:
-      - yarn-packages-{{ checksum "yarn.lock" }}
-
-step-save-build-cache: &step-save-build-cache
-  save_cache:
-    name: Save Yarn Package Cache
-    key: yarn-packages-{{ checksum "yarn.lock" }}
-    paths:
-      - ~/.cache/yarn
-
 version: 2.1
 jobs:
-  build:
+  dependencies:
     <<: *default-environment
     steps:
       - checkout
       - run: node --version
-      - <<: *step-restore-build-cache
+      - run: yarn -v
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-deps-{{ checksum "yarn.lock" }}
+            - yarn-deps
+            - node_modules
       - run:
           name: Install Dependencies
-          command: yarn install --immutable
-      - <<: *step-save-build-cache
+          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-deps-{{ checksum "yarn.lock" }}-{{ epoch }}
+          paths:
+            - ~/.cache/yarn
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   lint:
     <<: *default-environment
     steps:
       - checkout
-      - <<: *step-restore-build-cache
+      - attach_workspace:
+          at: .
       - run:
-          name: Lint
+          name: Linting
           command: yarn hardhat check
+
   test:
     <<: *default-environment
     steps:
       - checkout
-      - <<: *step-restore-build-cache
+      - attach_workspace:
+          at: .
       - run:
           name: Unit tests & coverage
           command: yarn hardhat coverage
 
 workflows:
-  version: 2
-  build-and-lint:
+  dependencies-lint-and-test:
     jobs:
-      - build
-      - lint
-      - test
-  build-lint-test-and-coverage:
-    jobs:
-      - build
+      - dependencies
       - lint:
           requires:
-            - build
+            - dependencies
       - test:
           requires:
             - lint
