@@ -1,9 +1,10 @@
 # Decentralized Ethereum Lottery Hardhat
 
+[![DEL](https://circleci.com/gh/v7m/decentralized-lottery-hardhat.svg?style=shield)](https://app.circleci.com/pipelines/github/v7m/decentralized-lottery-hardhat)
+
 *The purpose of this project is to acquire hands-on experience in web3 application development.*
 
 This app is a part of the Decentralized Ethereum Lottery project, designed for creating, testing, and deploying smart contracts. You can find the frontend part in the [Next.js Repo](https://github.com/v7m/decentralized-lottery-nextjs).
-
 
 # Built with:
 - Solidity
