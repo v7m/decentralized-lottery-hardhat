@@ -4,7 +4,10 @@
   "description": "",
   "scripts": {
     "test": "yarn hardhat test",
-    "test-staging": "yarn hardhat test --network sepolia"
+    "test-staging": "yarn hardhat test --network sepolia",
+    "lint": "solhint 'contracts/*.sol'",
+    "lint:fix": "solhint 'contracts/**/*.sol' --fix",
+    "coverage": "hardhat coverage"
   },
   "license": "MIT",
   "devDependencies": {

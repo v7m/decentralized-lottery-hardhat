@@ -38,7 +38,7 @@ jobs:
           at: .
       - run:
           name: Linting
-          command: yarn hardhat check
+          command: yarn lint
 
   test:
     <<: *default-environment
@@ -48,7 +48,7 @@ jobs:
           at: .
       - run:
           name: Unit tests & coverage
-          command: yarn hardhat coverage
+          command: yarn coverage
 
 workflows:
   dependencies-lint-and-test:
