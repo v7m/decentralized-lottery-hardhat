@@ -2,21 +2,26 @@
 
 [![DEL](https://circleci.com/gh/v7m/decentralized-lottery-hardhat.svg?style=shield)](https://app.circleci.com/pipelines/github/v7m/decentralized-lottery-hardhat)
 
-*The purpose of this project is to acquire hands-on experience in web3 application development.*
+> *This is an educational project with the purpose of acquiring hands-on experience in web3 application development using smart contracts written in Solidity.*
 
-This app is a part of the Decentralized Ethereum Lottery project, designed for creating, testing, and deploying smart contracts. You can find the frontend part in the [Next.js Repo](https://github.com/v7m/decentralized-lottery-nextjs).
+The Decentralized Lottery project consists of 2 parts:
+
+[Hardhat App](https://github.com/v7m/decentralized-lottery-hardhat): This component is responsible for managing smart contracts and includes deployment scripts, using the popular development environment for Ethereum smart contracts.
+
+[Next.js App](https://github.com/v7m/decentralized-lottery-nextjs): This part serves as the frontend of the application and interacts with on-chain logic within the Ethereum ecosystem.
 
 # Built with:
 - Solidity
-- Chainlink
+- Chainlink (VRF, Automation)
 - Hardhat
 - Ethers.js
 - Next.js
 - Moralis
 - IPFS
 
-# Smart contracts (Sepolia)
-[0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
+# Smart contract addresses:
+
+- Lottery: [0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
 
 # Getting Started
 
