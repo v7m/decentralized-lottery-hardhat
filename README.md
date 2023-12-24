@@ -1,4 +1,4 @@
-# Decentralized Ethereum Lottery Hardhat
+# Decentralized Lottery Hardhat
 
 [![DEL](https://circleci.com/gh/v7m/decentralized-lottery-hardhat.svg?style=shield)](https://app.circleci.com/pipelines/github/v7m/decentralized-lottery-hardhat)
 
@@ -10,7 +10,11 @@ The Decentralized Lottery project consists of 2 parts:
 
 [Next.js App](https://github.com/v7m/decentralized-lottery-nextjs): This part serves as the frontend of the application and interacts with on-chain logic within the Ethereum ecosystem.
 
-# Built with:
+# Description
+
+The **Decentralized Lottery** is a blockchain-based lottery system. It integrates Chainlink's Verifiable Random Function (VRF) to ensure fair and random winner selection, Chainlink's Automation for triggers lottery ending, and includes features for player management, automated lottery upkeep, and secure prize distribution. The contract governs entry rules, maintains the lottery's operational state, and handles the drawing and announcement of winners in an autonomous and transparent manner.
+
+## Built with:
 - Solidity
 - Chainlink (VRF, Automation)
 - Hardhat
@@ -19,9 +23,9 @@ The Decentralized Lottery project consists of 2 parts:
 - Moralis
 - IPFS
 
-# Smart contract addresses:
+## Smart contract addresses:
 
-- Lottery: [0xe59A431759a5a3C270Bba717C1E3dA350f090df4](https://sepolia.etherscan.io/address/0xe59A431759a5a3C270Bba717C1E3dA350f090df4)
+- `Lottery`: [0xE386385CBF96735f4dB76F0D7498Ae3d821175Ac](https://sepolia.etherscan.io/address/0xE386385CBF96735f4dB76F0D7498Ae3d821175Ac)
 
 # Getting Started
 
@@ -33,7 +37,7 @@ yarn
 
 # Usage
 
-Deploy:
+## Deploy:
 
 ```
 yarn hardhat deploy
@@ -49,6 +53,13 @@ yarn hardhat test
 
 ```
 yarn hardhat coverage
+```
+
+# Linting
+
+To check linting:
+```
+yarn hardhat check
 ```
 
 # Deployment to a testnet (Sepolia)
@@ -113,11 +124,4 @@ However, you can manual verify with:
 
 ```
 yarn hardhat verify --constructor-args arguments.js <DEPLOYED_CONTRACT_ADDRESS>
-```
-
-# Linting
-
-To check linting:
-```
-yarn hardhat check
 ```
